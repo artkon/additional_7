@@ -1,71 +1,81 @@
 module.exports = function solveSudoku(matrix) {
+
+  //копия матрицы
   var solution = matrix.map(function(arr){
     return arr.slice();
   });
-  // console.log(solution);
+  
+  if(solveHelper(solution) == true){
+    return solution;
+  } else {
+    return false;
+  }
 
-  // debugger;
-  while(true){
+
+  function solveHelper(solution){
     var minPossibleCountCell = false;
-    for(var i = 0; i < solution.length; i++){
-      for(var j = 0; j < solution.length; j++){
-        if(solution[i][j] != 0) continue;
-        var possibleValues = findPossibleValues(i, j, solution);
-        var possibleValuesCount = possibleValues.length;
 
-        if(possibleValuesCount == 0){
-          console.log("FAIL");
-          return false;
+    while(true){
+      minPossibleCountCell = false;
+
+      for(var i = 0; i < solution.length; i++){
+        for(var j = 0; j < solution.length; j++){
+
+          if(solution[i][j] != 0) continue;
+
+          var possibleValues = findPossibleValues(i, j, solution);
+          var possibleValuesCount = possibleValues.length;
+
+          if(possibleValuesCount == 0){
+            return false;
+          }
+          if(possibleValuesCount == 1){
+            solution[i][j] = possibleValues[0];
+            continue;
+          }
+          if(minPossibleCountCell == false || possibleValuesCount < minPossibleCountCell[1].length){
+            minPossibleCountCell = [[i, j], possibleValues];
+          }
         }
-        if(possibleValuesCount == 1){
-          solution[i][j] = possibleValues[0];
-          console.log('+1 : ' + i + ':' + j);
-          continue;
-        }
-        if(minPossibleCountCell == false || possibleValuesCount < minPossibleCountCell[1].length){
-          minPossibleCountCell = [[i, j], possibleValues];
-          console.log(minPossibleCountCell);
-        }
-        // console.log(possibleValuesCount);
       }
-      // break;
-    }
 
-    if(minPossibleCountCell == false){
-      console.log("РЕШЕНО");
-      printSudoku(solution);
-      return solution;
-    } else if(minPossibleCountCell[1].length > 1){
-        if(findPossibleValues(minPossibleCountCell[0][0], minPossibleCountCell[0][1], solution).length == minPossibleCountCell[1].length){
-          break;
-      }
-    }
-  }
-  debugger;
-
-
-
-
-  //Из вариативных решений пробуем каждое пока не получится 
-  var row = minPossibleCountCell[0][0];
-  var column = minPossibleCountCell[0][1];
-  for(let iter = 0; iter < minPossibleCountCell[1].length; iter++){
-      var solutionCopy = solution.map(function(arr){
-        return arr.slice();
-      });
-      solutionCopy[row][column] = minPossibleCountCell[1][iter];
-      console.log("Внутри ");
-
-      if(solveSudoku( solutionCopy )){
-        for(let j = 0; j < 9; j++){
-          for(let k = 0; k < 9; k++){
-            solution[j][k] = solutionCopy[j][k];
-          } 
-        }
+      if(minPossibleCountCell == false){
         return true;
+      } else if(minPossibleCountCell[1].length > 1){
+          if(findPossibleValues(minPossibleCountCell[0][0], minPossibleCountCell[0][1], solution).length == minPossibleCountCell[1].length){
+            break;
+        }
       }
+    }
+
+
+    //Из вариативных решений пробуем каждое пока не получится 
+    var row = minPossibleCountCell[0][0];
+    var column = minPossibleCountCell[0][1];
+
+    for(let iter = 0; iter < minPossibleCountCell[1].length; iter++){
+
+        var solutionCopy = solution.map(function(arr){
+          return arr.slice();
+        });
+
+        solutionCopy[row][column] = minPossibleCountCell[1][iter];
+
+        if( solveHelper( solutionCopy ) ){
+
+          for(let j = 0; j < 9; j++){
+            for(let k = 0; k < 9; k++){
+              
+              solution[j][k] = solutionCopy[j][k];
+            } 
+          }
+          return true;
+        }
+    }
+    return false;      
 
   }
+
 
   function findPossibleValues( rowIndex, columnIndex, matrix ){
     var sourceNum = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -78,7 +88,6 @@ module.exports = function solveSudoku(matrix) {
         sourceNum.splice( sourceNum.indexOf(numCheck), 1 );
       }
     })
-    // document.write(sourceNum);
     return sourceNum;
   }
 
@@ -106,13 +115,6 @@ module.exports = function solveSudoku(matrix) {
         if( matrix[m][l] > 0 ) result.push (matrix[m][l]);
       }
     }
-    // document.write(result + "<br>");
     return result;
-  }
-
-  function printSudoku(matrix){
-    for(var i = 0; i < matrix.length; i++){
-      // document.write(matrix[i] + "<br>");
-    }
   }
 }
