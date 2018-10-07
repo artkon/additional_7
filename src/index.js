@@ -1,9 +1,7 @@
 module.exports = function solveSudoku(matrix) {
 
   //копия матрицы
-  var solution = matrix.map(function(arr){
-    return arr.slice();
-  });
+  let solution = matrix.map( arr => arr.slice() );
   
   if(solveHelper(solution) == true){
     return solution;
@@ -13,18 +11,18 @@ module.exports = function solveSudoku(matrix) {
 
 
   function solveHelper(solution){
-    var minPossibleCountCell = false;
+    let minPossibleCountCell = false;
 
     while(true){
       minPossibleCountCell = false;
 
-      for(var i = 0; i < solution.length; i++){
-        for(var j = 0; j < solution.length; j++){
+      for(let i = 0; i < solution.length; i++){
+        for(let j = 0; j < solution.length; j++){
 
           if(solution[i][j] != 0) continue;
 
-          var possibleValues = findPossibleValues(i, j, solution);
-          var possibleValuesCount = possibleValues.length;
+          let possibleValues = findPossibleValues(i, j, solution);
+          let possibleValuesCount = possibleValues.length;
 
           if(possibleValuesCount == 0){
             return false;
@@ -50,14 +48,12 @@ module.exports = function solveSudoku(matrix) {
 
 
     //Из вариативных решений пробуем каждое пока не получится 
-    var row = minPossibleCountCell[0][0];
-    var column = minPossibleCountCell[0][1];
+    let row = minPossibleCountCell[0][0];
+    let column = minPossibleCountCell[0][1];
 
     for(let iter = 0; iter < minPossibleCountCell[1].length; iter++){
 
-        var solutionCopy = solution.map(function(arr){
-          return arr.slice();
-        });
+        let solutionCopy = solution.map( arr => arr.slice() );
 
         solutionCopy[row][column] = minPossibleCountCell[1][iter];
 
@@ -78,11 +74,11 @@ module.exports = function solveSudoku(matrix) {
 
 
   function findPossibleValues( rowIndex, columnIndex, matrix ){
-    var sourceNum = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    var rowValues = getRowValues(rowIndex, matrix);
-    var columnValues = getColumnValues(columnIndex, matrix);
-    var blockValues = getBlockValues(rowIndex, columnIndex, matrix);
-    var complete = rowValues.concat( columnValues.concat(blockValues) );
+    let sourceNum = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let rowValues = getRowValues(rowIndex, matrix);
+    let columnValues = getColumnValues(columnIndex, matrix);
+    let blockValues = getBlockValues(rowIndex, columnIndex, matrix);
+    let complete = rowValues.concat( columnValues.concat(blockValues) );
     complete.forEach(function(numCheck){
       if( sourceNum.indexOf(numCheck) != -1){
         sourceNum.splice( sourceNum.indexOf(numCheck), 1 );
@@ -92,14 +88,12 @@ module.exports = function solveSudoku(matrix) {
   }
 
   function getRowValues( rowIndex, matrix ){
-    return matrix[rowIndex].filter(function(element){
-      return element > 0;
-    })
+    return matrix[rowIndex].filter( element => element > 0 );
   }
 
   function getColumnValues( columnIndex, matrix ){
-    var result = [];
-    for(var n = 0; n < matrix.length; n++){
+    let result = [];
+    for(let n = 0; n < matrix.length; n++){
       if( matrix[n][columnIndex] == 0 ) continue;
       result.push( matrix[n][columnIndex] );
     }
@@ -107,11 +101,11 @@ module.exports = function solveSudoku(matrix) {
   }
 
   function getBlockValues( rowIndex, columnIndex, matrix ){
-    var blockRowStart = 3 * Math.floor(rowIndex / 3);
-    var blockColumnStart = 3 * Math.floor(columnIndex / 3);
-    var result = [];
-    for(var m = blockRowStart; m < blockRowStart + 3; m++){
-      for(var l = blockColumnStart; l < blockColumnStart + 3; l++){
+    let blockRowStart = 3 * Math.floor(rowIndex / 3);
+    let blockColumnStart = 3 * Math.floor(columnIndex / 3);
+    let result = [];
+    for(let m = blockRowStart; m < blockRowStart + 3; m++){
+      for(let l = blockColumnStart; l < blockColumnStart + 3; l++){
         if( matrix[m][l] > 0 ) result.push (matrix[m][l]);
       }
     }
